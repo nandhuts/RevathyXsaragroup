@@ -4,15 +4,21 @@ import { Building2, Megaphone, CheckCircle2, MessageSquare } from "lucide-react"
 import { Message } from "@prisma/client";
 
 export default async function AdminDashboard() {
-  const businessCount = await prisma.business.count();
-  const announcementCount = await prisma.announcement.count();
-  const achievementCount = await prisma.achievement.count();
-  const messageCount = await prisma.message.count();
+  let businessCount = 0, announcementCount = 0, achievementCount = 0, messageCount = 0;
+  let recentMessages: Message[] = [];
+  try {
+    businessCount = await prisma.business.count();
+    announcementCount = await prisma.announcement.count();
+    achievementCount = await prisma.achievement.count();
+    messageCount = await prisma.message.count();
 
-  const recentMessages = await prisma.message.findMany({
-    orderBy: { createdAt: "desc" },
-    take: 5,
-  });
+    recentMessages = await prisma.message.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 5,
+    });
+  } catch (e) {
+    console.warn("Database not accessible during build");
+  }
 
   return (
     <div>
@@ -78,7 +84,7 @@ export default async function AdminDashboard() {
                     <span className="text-sm text-gray-500">{msg.email}</span>
                   </div>
                   <span className="text-xs text-gray-400">
-                    {msg.createdAt.toLocaleDateString()}
+                    {msg.createdAt.toISOString().split('T')[0]}
                   </span>
                 </div>
                 {msg.subject && <p className="text-sm font-medium text-brand-blue dark:text-gray-300 mb-1">Sub: {msg.subject}</p>}

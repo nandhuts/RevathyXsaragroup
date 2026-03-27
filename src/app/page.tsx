@@ -7,19 +7,25 @@ import { ChevronRight, ArrowRight, ShieldCheck, TrendingUp, Users, Medal, MapPin
 import ContactForm from "@/components/home/ContactForm";
 
 export default async function Home() {
-  const businesses = await prisma.business.findMany({
-    orderBy: { order: "asc" },
-  });
+  let businesses: Business[] = [];
+  let achievements: Achievement[] = [];
+  let announcements: Announcement[] = [];
 
-  const achievements = await prisma.achievement.findMany({
-    orderBy: { order: "asc" },
-  });
-
-  const announcements = await prisma.announcement.findMany({
-    where: { isPublished: true },
-    orderBy: { createdAt: "desc" },
-    take: 3,
-  });
+  try {
+    businesses = await prisma.business.findMany({
+      orderBy: { order: "asc" },
+    });
+    achievements = await prisma.achievement.findMany({
+      orderBy: { order: "asc" },
+    });
+    announcements = await prisma.announcement.findMany({
+      where: { isPublished: true },
+      orderBy: { createdAt: "desc" },
+      take: 3,
+    });
+  } catch (e) {
+    console.warn("Database not accessible during build");
+  }
 
   const icons = [<Users key={1} className="w-10 h-10 text-brand-gold" />, <Medal key={2} className="w-10 h-10 text-brand-gold" />, <TrendingUp key={3} className="w-10 h-10 text-brand-gold" />, <ShieldCheck key={4} className="w-10 h-10 text-brand-gold" />];
 

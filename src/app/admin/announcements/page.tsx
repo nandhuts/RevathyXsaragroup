@@ -5,9 +5,14 @@ import { Trash2, Megaphone } from "lucide-react";
 import { Announcement } from "@prisma/client";
 
 export default async function AdminAnnouncements() {
-  const announcements = await prisma.announcement.findMany({
-    orderBy: { createdAt: "desc" },
-  });
+  let announcements: Announcement[] = [];
+  try {
+    announcements = await prisma.announcement.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+  } catch (e) {
+    console.warn("Database not accessible during build");
+  }
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -57,7 +62,7 @@ export default async function AdminAnnouncements() {
                           {announcement.content}
                         </p>
                         <p className="text-xs text-gray-400">
-                          {announcement.createdAt.toLocaleString()}
+                          {announcement.createdAt.toISOString().split('T')[0]}
                         </p>
                       </div>
                       <form action={deleteAnnouncement}>

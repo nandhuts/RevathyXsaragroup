@@ -7,9 +7,14 @@ import { ArrowLeft, CheckCircle2, MapPin, Phone, Mail } from "lucide-react";
 import { notFound } from "next/navigation";
 
 export default async function BusinessDetails({ params }: { params: { slug: string } }) {
-  const business = await prisma.business.findUnique({
-    where: { slug: params.slug },
-  });
+  let business = null;
+  try {
+    business = await prisma.business.findUnique({
+      where: { slug: params.slug },
+    });
+  } catch (e) {
+    console.warn("Database not accessible during build");
+  }
 
   if (!business) {
     notFound();

@@ -6,9 +6,14 @@ import Image from "next/image";
 import { Business } from "@prisma/client";
 
 export default async function AdminBusinesses() {
-  const businesses = await prisma.business.findMany({
-    orderBy: { order: "asc" },
-  });
+  let businesses: Business[] = [];
+  try {
+    businesses = await prisma.business.findMany({
+      orderBy: { order: "asc" },
+    });
+  } catch(e) {
+    console.warn("Database not accessible during build");
+  }
 
   return (
     <div>
