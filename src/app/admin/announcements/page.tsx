@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { prisma } from "@/lib/prisma";
 import { createAnnouncement, deleteAnnouncement } from "@/lib/actions";
 import { Trash2, Megaphone } from "lucide-react";

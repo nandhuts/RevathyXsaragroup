@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { prisma } from "@/lib/prisma";
 import { updateBusiness } from "@/lib/actions";
 import { notFound } from "next/navigation";

@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { prisma } from "@/lib/prisma";
 import { Business, Achievement, Announcement } from "@prisma/client";
 import Image from "next/image";
@@ -20,7 +21,7 @@ export default async function Home() {
     take: 3,
   });
 
-  const icons = [<Users key={1} className="w-10 h-10 text-brand-gold"/>, <Medal key={2} className="w-10 h-10 text-brand-gold"/>, <TrendingUp key={3} className="w-10 h-10 text-brand-gold"/>, <ShieldCheck key={4} className="w-10 h-10 text-brand-gold"/>];
+  const icons = [<Users key={1} className="w-10 h-10 text-brand-gold" />, <Medal key={2} className="w-10 h-10 text-brand-gold" />, <TrendingUp key={3} className="w-10 h-10 text-brand-gold" />, <ShieldCheck key={4} className="w-10 h-10 text-brand-gold" />];
 
   return (
     <div className="flex flex-col pt-20">
@@ -37,7 +38,7 @@ export default async function Home() {
           />
           <div className="relative z-20 text-center px-4 max-w-5xl mx-auto">
             <span className="inline-block py-1 px-3 rounded-full bg-brand-gold/20 border border-brand-gold text-brand-gold text-sm font-semibold tracking-wider mb-6 backdrop-blur-sm">
-              PREMIUM CORPORATE GROUP
+              CORPORATE GROUP
             </span>
             <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
               Revathy <span className="text-brand-gold">Xsara</span> Group
@@ -114,7 +115,7 @@ export default async function Home() {
                 <p className="text-gray-600 dark:text-gray-300 text-lg mb-6 leading-relaxed">
                   Revathy Xsara Private Limited manages a diverse portfolio of businesses, aiming to be the most trusted local brand. From premium cinema experiences to everyday retail and essential vehicle services, we touch lives daily with our commitment to quality.
                 </p>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
                   <div className="bg-white dark:bg-brand-blue-light p-6 rounded-xl shadow-md border border-gray-100 dark:border-gray-800">
                     <h4 className="text-xl font-bold text-brand-blue dark:text-white mb-3">Our Mission</h4>
@@ -198,7 +199,7 @@ export default async function Home() {
               <h3 className="text-4xl font-bold text-brand-blue dark:text-white">Life at Revathy Xsara</h3>
               <div className="w-24 h-1 bg-brand-gold mx-auto mt-6 rounded-full" />
             </div>
-            
+
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="col-span-2 row-span-2 relative h-[400px] md:h-auto rounded-2xl overflow-hidden group">
                 <Image src={businesses[0]?.imageUrl || "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=1470&auto=format&fit=crop"} alt="Gallery 1" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -210,10 +211,10 @@ export default async function Home() {
                 <Image src={businesses[2]?.imageUrl || "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1374&auto=format&fit=crop"} alt="Gallery 3" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
               </div>
               <div className="relative h-[200px] rounded-2xl overflow-hidden group">
-                 <Image src={businesses[3]?.imageUrl || "https://images.unsplash.com/photo-1580273916550-e323be2ae537?q=80&w=1528&auto=format&fit=crop"} alt="Gallery 4" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                <Image src={businesses[3]?.imageUrl || "https://images.unsplash.com/photo-1580273916550-e323be2ae537?q=80&w=1528&auto=format&fit=crop"} alt="Gallery 4" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
               </div>
               <div className="relative h-[200px] rounded-2xl overflow-hidden group">
-                 <Image src={businesses[4]?.imageUrl || "https://images.unsplash.com/photo-1545083036-79df3b68018e?q=80&w=1470&auto=format&fit=crop"} alt="Gallery 5" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                <Image src={businesses[4]?.imageUrl || "https://images.unsplash.com/photo-1545083036-79df3b68018e?q=80&w=1470&auto=format&fit=crop"} alt="Gallery 5" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
               </div>
             </div>
           </div>
@@ -222,7 +223,7 @@ export default async function Home() {
         {/* CONTACT SECTION */}
         <section id="contact" className="py-24 bg-white dark:bg-brand-blue relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-             <div className="text-center mb-16">
+            <div className="text-center mb-16">
               <h2 className="text-brand-gold font-semibold tracking-wider uppercase mb-3">Get in Touch</h2>
               <h3 className="text-4xl font-bold text-brand-blue dark:text-white">Contact Our Team</h3>
               <div className="w-24 h-1 bg-brand-gold mx-auto mt-6 rounded-full" />
@@ -254,16 +255,16 @@ export default async function Home() {
                     </li>
                   </ul>
                 </div>
-                
+
                 {/* Map Embed */}
                 <div className="h-[300px] rounded-2xl overflow-hidden shadow-lg border border-gray-200 dark:border-gray-800">
-                  <iframe 
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3929.1!2d76!3d10!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0!2s!5e0!3m2!1sen!2sin!4v1600000000000!5m2!1sen!2sin" 
-                    width="100%" 
-                    height="100%" 
-                    style={{ border: 0 }} 
-                    allowFullScreen 
-                    loading="lazy" 
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3929.1!2d76!3d10!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0!2s!5e0!3m2!1sen!2sin!4v1600000000000!5m2!1sen!2sin"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
                   ></iframe>
                 </div>
@@ -276,11 +277,11 @@ export default async function Home() {
           </div>
         </section>
       </main>
-      
+
       {/* WhatsApp Floating Button */}
-      <a 
-        href="https://wa.me/919876543210" 
-        target="_blank" 
+      <a
+        href="https://wa.me/919876543210"
+        target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 bg-green-500 text-white p-4 rounded-full shadow-2xl hover:bg-green-600 transition-all duration-300 z-50 flex items-center justify-center transform hover:scale-110"
       >

@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { prisma } from "@/lib/prisma";
 import { Building2, Megaphone, CheckCircle2, MessageSquare } from "lucide-react";
 import { Message } from "@prisma/client";

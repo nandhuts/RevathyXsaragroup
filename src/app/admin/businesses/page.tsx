@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { Edit, Eye } from "lucide-react";
@@ -25,7 +26,7 @@ export default async function AdminBusinesses() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-            {businesses.map((business) => (
+            {businesses.map((business: any) => (
               <tr key={business.id} className="hover:bg-gray-50 dark:hover:bg-brand-blue-dark/50 transition-colors">
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-4">
