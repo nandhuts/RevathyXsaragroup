@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { Edit, Eye } from "lucide-react";
 import Image from "next/image";
+import { Business } from "@prisma/client";
 
 export default async function AdminBusinesses() {
   const businesses = await prisma.business.findMany({
@@ -26,7 +27,7 @@ export default async function AdminBusinesses() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-            {businesses.map((business: any) => (
+            {businesses.map((business: Business) => (
               <tr key={business.id} className="hover:bg-gray-50 dark:hover:bg-brand-blue-dark/50 transition-colors">
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-4">
