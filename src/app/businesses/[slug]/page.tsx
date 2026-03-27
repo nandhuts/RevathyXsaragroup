@@ -12,7 +12,7 @@ export default async function BusinessDetails({ params }: { params: { slug: stri
     business = await prisma.business.findUnique({
       where: { slug: params.slug },
     });
-  } catch (e) {
+  } catch {
     console.warn("Database not accessible during build");
   }
 

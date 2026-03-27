@@ -23,7 +23,7 @@ export default async function Home() {
       orderBy: { createdAt: "desc" },
       take: 3,
     });
-  } catch (e) {
+  } catch {
     console.warn("Database not accessible during build");
   }
 

@@ -11,7 +11,7 @@ export default async function AdminBusinesses() {
     businesses = await prisma.business.findMany({
       orderBy: { order: "asc" },
     });
-  } catch(e) {
+  } catch {
     console.warn("Database not accessible during build");
   }
 

@@ -10,7 +10,7 @@ export default async function AdminAnnouncements() {
     announcements = await prisma.announcement.findMany({
       orderBy: { createdAt: "desc" },
     });
-  } catch (e) {
+  } catch {
     console.warn("Database not accessible during build");
   }
 

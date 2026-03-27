@@ -16,7 +16,7 @@ export default async function AdminDashboard() {
       orderBy: { createdAt: "desc" },
       take: 5,
     });
-  } catch (e) {
+  } catch {
     console.warn("Database not accessible during build");
   }
 
