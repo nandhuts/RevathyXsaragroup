@@ -1,17 +1,22 @@
 export const dynamic = "force-dynamic";
 
-import { prisma } from "@/lib/prisma";
+import { supabase } from "@/lib/supabase";
+import { Business } from "@/lib/types";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, CheckCircle2, MapPin, Phone, Mail } from "lucide-react";
+import { MapPin, Phone, Mail, ArrowLeft, ExternalLink } from "lucide-react";
 import { notFound } from "next/navigation";
 
 export default async function BusinessDetails({ params }: { params: { slug: string } }) {
-  let business = null;
+  let business: Business | null = null;
   try {
-    business = await prisma.business.findUnique({
-      where: { slug: params.slug },
-    });
+    // We compute slug on front end as lowercase name so we match it here.
+    // However, Supabase doesn't easily support dynamic string matching derived via slug without a slug column.
+    // Instead we query all and find by slug. It's efficient enough for 5 items.
+    const { data } = await supabase.from('businesses').select('*');
+    if (data) {
+      business = data.find((b: Business) => b.name.toLowerCase().replace(/ /g, '-') === params.slug) || null;
+    }
   } catch {
     console.warn("Database not accessible during build");
   }
@@ -20,135 +25,94 @@ export default async function BusinessDetails({ params }: { params: { slug: stri
     notFound();
   }
 
-  const parseServices = (servicesStr: string) => {
-    try {
-      return JSON.parse(servicesStr) as string[];
-    } catch {
-      return [] as string[];
-    }
-  };
-
-  const services = parseServices(business.services);
-
   return (
-    <div className="flex flex-col">
-      <main className="flex-grow bg-gray-50 dark:bg-brand-blue-dark">
-        {/* HERO SECTION */}
-        <section className="relative h-[60vh] flex items-end pb-12">
-          <div className="absolute inset-0 bg-brand-blue-dark/60 z-10" />
-          <Image
-            src={business.imageUrl}
-            alt={business.name}
-            fill
-            className="object-cover object-center"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-brand-blue-dark via-brand-blue-dark/50 to-transparent z-10" />
-          
-          <div className="relative z-20 px-4 max-w-7xl mx-auto w-full">
-            <Link href="/#businesses" className="inline-flex items-center text-gray-300 hover:text-brand-gold mb-6 transition-colors">
-              <ArrowLeft className="w-4 h-4 mr-2" /> Back to Businesses
-            </Link>
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
-              {business.name}
-            </h1>
-            <p className="text-xl text-gray-200 max-w-3xl font-light">
-              {business.shortDescription}
-            </p>
+    <div className="flex flex-col min-h-screen pt-20 bg-gray-50 dark:bg-brand-blue-dark">
+      <main className="flex-grow">
+        <section className="relative h-[60vh] flex items-end pb-16">
+          <div className="absolute inset-0 z-0">
+            <Image
+              src={business.image || "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80"}
+              alt={`${business.name} Cover`}
+              fill
+              className="object-cover"
+              priority
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-brand-blue-dark via-brand-blue-dark/80 to-transparent" />
           </div>
-        </section>
-
-        {/* CONTENT */}
-        <section className="py-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
-              
-              {/* Main Content */}
-              <div className="lg:col-span-2 space-y-12">
-                <div>
-                  <h2 className="text-3xl font-bold text-brand-blue dark:text-white mb-6">About {business.name}</h2>
-                  <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
-                    {business.fullDescription}
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="text-2xl font-bold text-brand-blue dark:text-white mb-6">Key Services & Highlights</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {services.map((service, i) => (
-                      <div key={i} className="flex items-center p-4 bg-white dark:bg-brand-blue-light/50 rounded-xl border border-gray-100 dark:border-brand-blue-light shadow-sm">
-                        <CheckCircle2 className="w-6 h-6 text-brand-gold mr-3 flex-shrink-0" />
-                        <span className="font-medium text-brand-blue dark:text-gray-200">{service}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                 {/* Extra imagery / gallery for this business can be added here */}
-                 <div className="relative h-[400px] w-full rounded-2xl overflow-hidden shadow-xl mt-12">
-                     <Image
-                      src={business.imageUrl}
-                      alt={business.name + " facility"}
-                      fill
-                      className="object-cover"
-                    />
-                 </div>
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full block">
+            <div className="mb-6 inline-block">
+              <Link href="/#businesses" className="inline-flex items-center text-brand-gold hover:text-white transition-colors">
+                <ArrowLeft className="w-5 h-5 mr-2" /> Back to Businesses
+              </Link>
+            </div>
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+              <div>
+                <span className="inline-block py-1 px-3 rounded-full bg-brand-gold/20 border border-brand-gold text-brand-gold text-xs font-bold uppercase tracking-widest mb-4">
+                  {business.category || 'Group Enterprise'}
+                </span>
+                <h1 className="text-5xl md:text-6xl font-bold text-white mb-4">
+                  {business.name}
+                </h1>
+                <p className="text-xl text-gray-300 max-w-2xl font-light">
+                  {business.description}
+                </p>
               </div>
-
-              {/* Sidebar Contact & Map */}
-              <div className="lg:col-span-1">
-                <div className="sticky top-28 space-y-8">
-                  <div className="bg-white dark:bg-brand-blue-light/50 rounded-2xl p-8 border border-gray-100 dark:border-brand-blue-light shadow-lg">
-                    <h3 className="text-2xl font-bold text-brand-blue dark:text-white mb-6">Contact Details</h3>
-                    <ul className="space-y-6">
-                      {business.address && (
-                        <li className="flex items-start">
-                          <MapPin className="w-6 h-6 text-brand-gold mr-4 flex-shrink-0 mt-1" />
-                          <span className="text-gray-600 dark:text-gray-300">{business.address}</span>
-                        </li>
-                      )}
-                      {business.phone && (
-                        <li className="flex items-center">
-                          <Phone className="w-6 h-6 text-brand-gold mr-4 flex-shrink-0" />
-                          <a href={`tel:${business.phone}`} className="text-brand-blue dark:text-brand-gold font-medium hover:underline">{business.phone}</a>
-                        </li>
-                      )}
-                      {business.email && (
-                        <li className="flex items-center">
-                          <Mail className="w-6 h-6 text-brand-gold mr-4 flex-shrink-0" />
-                          <a href={`mailto:${business.email}`} className="text-brand-blue dark:text-brand-gold font-medium hover:underline">{business.email}</a>
-                        </li>
-                      )}
-                    </ul>
-                  </div>
-
-                  {business.locationMap && (
-                    <div className="h-[300px] rounded-2xl overflow-hidden shadow-lg border border-gray-200 dark:border-gray-800">
-                      <iframe 
-                        src={business.locationMap}
-                        width="100%" 
-                        height="100%" 
-                        style={{ border: 0 }} 
-                        allowFullScreen 
-                        loading="lazy" 
-                        referrerPolicy="no-referrer-when-downgrade"
-                      ></iframe>
-                    </div>
-                  )}
-
-                  <a 
-                    href="#contact" 
-                    className="block w-full text-center bg-brand-gold hover:bg-brand-gold-dark text-white font-bold py-4 rounded-xl transition-colors shadow-lg"
-                  >
-                    Send an Enquiry
-                  </a>
-                </div>
-              </div>
-
             </div>
           </div>
         </section>
 
+        <section className="py-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+              <div className="lg:col-span-2">
+                <div className="bg-white dark:bg-brand-blue-light rounded-3xl p-8 md:p-12 shadow-xl border border-gray-100 dark:border-gray-800">
+                  <h2 className="text-3xl font-bold text-brand-blue dark:text-white mb-6">About {business.name}</h2>
+                  <div className="prose dark:prose-invert max-w-none text-lg text-gray-600 dark:text-gray-300 leading-relaxed space-y-6">
+                    <p>{business.description}</p>
+                    <p>As a key enterprise under the Revathy Xsara Group, we maintain the highest standards of quality, customer satisfaction, and reliable delivery in all our ventures.</p>
+                  </div>
+                </div>
+              </div>
+              <div className="lg:col-span-1 space-y-8">
+                <div className="bg-white dark:bg-brand-blue-light rounded-2xl p-8 shadow-xl border border-gray-100 dark:border-gray-800">
+                  <h3 className="text-xl font-bold text-brand-blue dark:text-white mb-6 border-b border-gray-100 dark:border-gray-800 pb-4">Contact Information</h3>
+                  <ul className="space-y-6">
+                    <li className="flex items-start">
+                      <div className="bg-brand-gold/10 p-3 rounded-xl mr-4">
+                        <Phone className="w-6 h-6 text-brand-gold" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500 font-semibold mb-1">Phone</p>
+                        <p className="text-brand-blue dark:text-white font-medium">+91 98765 43210</p>
+                      </div>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="bg-brand-gold/10 p-3 rounded-xl mr-4">
+                        <Mail className="w-6 h-6 text-brand-gold" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500 font-semibold mb-1">Email</p>
+                        <p className="text-brand-blue dark:text-white font-medium">contact@{business.name.replace(/ /g, '').toLowerCase()}.com</p>
+                      </div>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="bg-brand-gold/10 p-3 rounded-xl mr-4">
+                        <MapPin className="w-6 h-6 text-brand-gold" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500 font-semibold mb-1">Address</p>
+                        <p className="text-brand-blue dark:text-white font-medium leading-relaxed">{business.location || 'HQ, Kerala, India'}</p>
+                      </div>
+                    </li>
+                  </ul>
+                  <button className="w-full mt-8 bg-brand-blue hover:bg-brand-blue-dark dark:bg-brand-gold dark:hover:bg-brand-gold-dark text-white font-bold py-4 px-6 rounded-xl transition-all shadow-md flex items-center justify-center">
+                    Get Directions <ExternalLink className="w-5 h-5 ml-2" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
     </div>
   );

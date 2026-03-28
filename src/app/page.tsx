@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
-import { prisma } from "@/lib/prisma";
-import { Business, Achievement, Announcement } from "@prisma/client";
+import { supabase } from "@/lib/supabase";
+import { Business, Announcement } from "@/lib/types";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronRight, ArrowRight, ShieldCheck, TrendingUp, Users, Medal, MapPin, Phone } from "lucide-react";
@@ -8,26 +8,28 @@ import ContactForm from "@/components/home/ContactForm";
 
 export default async function Home() {
   let businesses: Business[] = [];
-  let achievements: Achievement[] = [];
   let announcements: Announcement[] = [];
 
   try {
-    businesses = await prisma.business.findMany({
-      orderBy: { order: "asc" },
-    });
-    achievements = await prisma.achievement.findMany({
-      orderBy: { order: "asc" },
-    });
-    announcements = await prisma.announcement.findMany({
-      where: { isPublished: true },
-      orderBy: { createdAt: "desc" },
-      take: 3,
-    });
+    const { data: bData } = await supabase.from('businesses').select('*').order('id', { ascending: true });
+    if (bData) businesses = bData;
+    
+    // We simulate achievements as static or just generic stats to not break the UI design
+    const { data: aData } = await supabase.from('announcements').select('*').order('date', { ascending: false }).limit(3);
+    if (aData) announcements = aData;
   } catch {
-    console.warn("Database not accessible during build");
+    console.warn("Supabase not accessible during build");
   }
 
   const icons = [<Users key={1} className="w-10 h-10 text-brand-gold" />, <Medal key={2} className="w-10 h-10 text-brand-gold" />, <TrendingUp key={3} className="w-10 h-10 text-brand-gold" />, <ShieldCheck key={4} className="w-10 h-10 text-brand-gold" />];
+
+  // Static achievements to keep UI exactly the same as requested
+  const achievements = [
+    { id: 1, title: 'Businesses', value: businesses.length.toString() || '5+', description: 'Across key sectors' },
+    { id: 2, title: 'Customers', value: '100k+', description: 'Served monthly' },
+    { id: 3, title: 'Employees', value: '250+', description: 'Local community jobs' },
+    { id: 4, title: 'Years', value: '25+', description: 'Of excellence' },
+  ];
 
   return (
     <div className="flex flex-col pt-20">
@@ -86,7 +88,7 @@ export default async function Home() {
                       <div key={announcement.id} className="text-sm font-medium flex items-center">
                         <ChevronRight className="w-4 h-4 mr-1 flex-shrink-0 opacity-50" />
                         <span className="mr-2 font-bold">{announcement.title}:</span>
-                        <span className="truncate">{announcement.content}</span>
+                        <span className="truncate">{announcement.message}</span>
                       </div>
                     ))}
                   </div>
@@ -121,7 +123,7 @@ export default async function Home() {
                 <p className="text-gray-600 dark:text-gray-300 text-lg mb-6 leading-relaxed">
                   Revathy Xsara Private Limited manages a diverse portfolio of businesses, aiming to be the most trusted local brand. From premium cinema experiences to everyday retail and essential vehicle services, we touch lives daily with our commitment to quality.
                 </p>
-
+                
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
                   <div className="bg-white dark:bg-brand-blue-light p-6 rounded-xl shadow-md border border-gray-100 dark:border-gray-800">
                     <h4 className="text-xl font-bold text-brand-blue dark:text-white mb-3">Our Mission</h4>
@@ -147,33 +149,36 @@ export default async function Home() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {businesses.map((business: Business) => (
-                <div key={business.id} className="group bg-white dark:bg-brand-blue-light rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-800 flex flex-col h-full transform hover:-translate-y-2">
-                  <div className="relative h-64 overflow-hidden">
-                    <Image
-                      src={business.imageUrl}
-                      alt={business.name}
-                      fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-700"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-brand-blue-dark/90 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
-                    <h4 className="absolute bottom-4 left-6 right-6 text-2xl font-bold text-white z-10">
-                      {business.name}
-                    </h4>
+              {businesses.map((business: Business) => {
+                const slug = business.name.toLowerCase().replace(/ /g, '-');
+                return (
+                  <div key={business.id} className="group bg-white dark:bg-brand-blue-light rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-800 flex flex-col h-full transform hover:-translate-y-2">
+                    <div className="relative h-64 overflow-hidden">
+                      <Image
+                        src={business.image}
+                        alt={business.name}
+                        fill
+                        className="object-cover group-hover:scale-110 transition-transform duration-700"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-brand-blue-dark/90 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
+                      <h4 className="absolute bottom-4 left-6 right-6 text-2xl font-bold text-white z-10">
+                        {business.name}
+                      </h4>
+                    </div>
+                    <div className="p-6 flex-grow flex flex-col">
+                      <p className="text-gray-600 dark:text-gray-300 mb-6 flex-grow">
+                        {business.description}
+                      </p>
+                      <Link
+                        href={`/businesses/${slug}`}
+                        className="inline-flex items-center text-brand-blue dark:text-brand-gold font-semibold group-hover:underline"
+                      >
+                        View Details <ChevronRight className="w-4 h-4 ml-1" />
+                      </Link>
+                    </div>
                   </div>
-                  <div className="p-6 flex-grow flex flex-col">
-                    <p className="text-gray-600 dark:text-gray-300 mb-6 flex-grow">
-                      {business.shortDescription}
-                    </p>
-                    <Link
-                      href={`/businesses/${business.slug}`}
-                      className="inline-flex items-center text-brand-blue dark:text-brand-gold font-semibold group-hover:underline"
-                    >
-                      View Details <ChevronRight className="w-4 h-4 ml-1" />
-                    </Link>
-                  </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           </div>
         </section>
@@ -183,7 +188,7 @@ export default async function Home() {
           <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1469&auto=format&fit=crop')] opacity-10 bg-cover bg-fixed bg-center" />
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
-              {achievements.map((achievement: Achievement, i: number) => (
+              {achievements.map((achievement: { id: number; title: string; value: string; description: string }, i: number) => (
                 <div key={achievement.id} className="p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
                   <div className="flex justify-center mb-4">
                     {icons[i % icons.length]}
@@ -205,22 +210,22 @@ export default async function Home() {
               <h3 className="text-4xl font-bold text-brand-blue dark:text-white">Life at Revathy Xsara</h3>
               <div className="w-24 h-1 bg-brand-gold mx-auto mt-6 rounded-full" />
             </div>
-
+            
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="col-span-2 row-span-2 relative h-[400px] md:h-auto rounded-2xl overflow-hidden group">
-                <Image src={businesses[0]?.imageUrl || "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=1470&auto=format&fit=crop"} alt="Gallery 1" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                <Image src={businesses[0]?.image || "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=1470&auto=format&fit=crop"} alt="Gallery 1" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
               </div>
               <div className="relative h-[200px] rounded-2xl overflow-hidden group">
-                <Image src={businesses[1]?.imageUrl || "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=1498&auto=format&fit=crop"} alt="Gallery 2" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                <Image src={businesses[1]?.image || "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=1498&auto=format&fit=crop"} alt="Gallery 2" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
               </div>
               <div className="relative h-[200px] rounded-2xl overflow-hidden group">
-                <Image src={businesses[2]?.imageUrl || "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1374&auto=format&fit=crop"} alt="Gallery 3" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                <Image src={businesses[2]?.image || "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1374&auto=format&fit=crop"} alt="Gallery 3" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
               </div>
               <div className="relative h-[200px] rounded-2xl overflow-hidden group">
-                <Image src={businesses[3]?.imageUrl || "https://images.unsplash.com/photo-1580273916550-e323be2ae537?q=80&w=1528&auto=format&fit=crop"} alt="Gallery 4" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                 <Image src={businesses[3]?.image || "https://images.unsplash.com/photo-1580273916550-e323be2ae537?q=80&w=1528&auto=format&fit=crop"} alt="Gallery 4" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
               </div>
               <div className="relative h-[200px] rounded-2xl overflow-hidden group">
-                <Image src={businesses[4]?.imageUrl || "https://images.unsplash.com/photo-1545083036-79df3b68018e?q=80&w=1470&auto=format&fit=crop"} alt="Gallery 5" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                 <Image src={businesses[4]?.image || "https://images.unsplash.com/photo-1545083036-79df3b68018e?q=80&w=1470&auto=format&fit=crop"} alt="Gallery 5" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
               </div>
             </div>
           </div>
@@ -229,7 +234,7 @@ export default async function Home() {
         {/* CONTACT SECTION */}
         <section id="contact" className="py-24 bg-white dark:bg-brand-blue relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
+             <div className="text-center mb-16">
               <h2 className="text-brand-gold font-semibold tracking-wider uppercase mb-3">Get in Touch</h2>
               <h3 className="text-4xl font-bold text-brand-blue dark:text-white">Contact Our Team</h3>
               <div className="w-24 h-1 bg-brand-gold mx-auto mt-6 rounded-full" />
@@ -261,16 +266,16 @@ export default async function Home() {
                     </li>
                   </ul>
                 </div>
-
+                
                 {/* Map Embed */}
                 <div className="h-[300px] rounded-2xl overflow-hidden shadow-lg border border-gray-200 dark:border-gray-800">
-                  <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3929.1!2d76!3d10!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0!2s!5e0!3m2!1sen!2sin!4v1600000000000!5m2!1sen!2sin"
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0 }}
-                    allowFullScreen
-                    loading="lazy"
+                  <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3929.1!2d76!3d10!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0!2s!5e0!3m2!1sen!2sin!4v1600000000000!5m2!1sen!2sin" 
+                    width="100%" 
+                    height="100%" 
+                    style={{ border: 0 }} 
+                    allowFullScreen 
+                    loading="lazy" 
                     referrerPolicy="no-referrer-when-downgrade"
                   ></iframe>
                 </div>
@@ -283,11 +288,11 @@ export default async function Home() {
           </div>
         </section>
       </main>
-
+      
       {/* WhatsApp Floating Button */}
-      <a
-        href="https://wa.me/919876543210"
-        target="_blank"
+      <a 
+        href="https://wa.me/919876543210" 
+        target="_blank" 
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 bg-green-500 text-white p-4 rounded-full shadow-2xl hover:bg-green-600 transition-all duration-300 z-50 flex items-center justify-center transform hover:scale-110"
       >

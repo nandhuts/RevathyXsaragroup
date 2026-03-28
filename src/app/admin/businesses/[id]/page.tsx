@@ -1,14 +1,20 @@
 export const dynamic = "force-dynamic";
-import { prisma } from "@/lib/prisma";
+import { supabase } from "@/lib/supabase";
 import { updateBusiness } from "@/lib/actions";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Edit3, Image as ImageIcon, Map, Megaphone } from "lucide-react";
+import { Business } from "@/lib/types";
 
 export default async function EditBusinessPage({ params }: { params: { id: string } }) {
-  const business = await prisma.business.findUnique({
-    where: { id: params.id },
-  });
+  let business: Business | null = null;
+  
+  try {
+    const { data } = await supabase.from('businesses').select('*').eq('id', params.id).single();
+    if (data) business = data as Business;
+  } catch {
+    console.warn("Database not accessible during build");
+  }
 
   if (!business) {
     notFound();
@@ -18,12 +24,8 @@ export default async function EditBusinessPage({ params }: { params: { id: strin
     <div className="max-w-4xl mx-auto">
       <div className="mb-6 flex items-center justify-between">
         <Link href="/admin/businesses" className="flex items-center text-gray-500 hover:text-brand-blue dark:hover:text-brand-gold transition-colors font-medium">
-          <ArrowLeft className="w-5 h-5 mr-2" />
-          Back to Businesses
+          <ArrowLeft className="w-5 h-5 mr-2" /> Back to Businesses
         </Link>
-        <span className="bg-brand-gold/20 text-brand-gold px-3 py-1 rounded-full text-sm font-semibold tracking-wide">
-          Editing Business
-        </span>
       </div>
 
       <div className="bg-white dark:bg-brand-blue-light rounded-2xl shadow-lg border border-gray-100 dark:border-brand-blue-light overflow-hidden">
@@ -32,73 +34,48 @@ export default async function EditBusinessPage({ params }: { params: { id: strin
             <Edit3 className="w-6 h-6 text-brand-blue dark:text-brand-gold" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              {business.name}
-            </h1>
-            <p className="text-gray-500 text-sm">Update company description, images, and contact information.</p>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{business.name}</h1>
+            <p className="text-gray-500 text-sm">Update content pushed directly to Supabase.</p>
           </div>
         </div>
 
         <form action={updateBusiness} className="p-8 space-y-8">
           <input type="hidden" name="id" value={business.id} />
-
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Business Name</label>
-                <input required type="text" name="name" defaultValue={business.name} className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-brand-blue focus:ring-2 focus:ring-brand-gold focus:border-brand-gold outline-none transition-all dark:text-white" />
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Name</label>
+                <input required type="text" name="name" defaultValue={business.name} className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-brand-blue focus:ring-2 focus:ring-brand-gold dark:text-white" />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Short Description</label>
-                <input required type="text" name="shortDescription" defaultValue={business.shortDescription} className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-brand-blue focus:ring-2 focus:ring-brand-gold focus:border-brand-gold outline-none transition-all dark:text-white" />
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Category</label>
+                <input required type="text" name="category" defaultValue={business.category} className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-brand-blue focus:ring-2 focus:ring-brand-gold dark:text-white" />
               </div>
             </div>
 
             <div>
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center">
-                <Megaphone className="w-4 h-4 mr-2 text-brand-gold" />
-                Full Page Description
+                <Megaphone className="w-4 h-4 mr-2 text-brand-gold" /> Description
               </label>
-              <textarea required name="fullDescription" rows={5} defaultValue={business.fullDescription} className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-brand-blue focus:ring-2 focus:ring-brand-gold focus:border-brand-gold outline-none transition-all dark:text-white resize-y" />
+              <textarea required name="description" rows={5} defaultValue={business.description} className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-brand-blue focus:ring-2 focus:ring-brand-gold outline-none transition-all dark:text-white resize-y" />
             </div>
 
             <div>
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center">
-                <ImageIcon className="w-4 h-4 mr-2 text-brand-gold" />
-                Cover Image URL
+                <ImageIcon className="w-4 h-4 mr-2 text-brand-gold" /> Image URL
               </label>
-              <input required type="text" name="imageUrl" defaultValue={business.imageUrl} className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-brand-blue focus:ring-2 focus:ring-brand-gold focus:border-brand-gold outline-none transition-all dark:text-white" />
-              <p className="mt-2 text-xs text-gray-500">Provide an Unsplash URL (e.g. from images.unsplash.com) or an absolute image path.</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-gray-200 dark:border-gray-800">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Phone Number</label>
-                <input type="text" name="phone" defaultValue={business.phone || ""} className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-brand-blue focus:ring-2 focus:ring-brand-gold focus:border-brand-gold outline-none transition-all dark:text-white" />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Email Address</label>
-                <input type="email" name="email" defaultValue={business.email || ""} className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-brand-blue focus:ring-2 focus:ring-brand-gold focus:border-brand-gold outline-none transition-all dark:text-white" />
-              </div>
+              <input required type="text" name="image" defaultValue={business.image || ""} className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-brand-blue focus:ring-2 focus:ring-brand-gold dark:text-white" />
             </div>
 
             <div>
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center">
-                <Map className="w-4 h-4 mr-2 text-brand-gold" />
-                Physical Address
+                <Map className="w-4 h-4 mr-2 text-brand-gold" /> Location
               </label>
-              <input type="text" name="address" defaultValue={business.address || ""} className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-brand-blue focus:ring-2 focus:ring-brand-gold focus:border-brand-gold outline-none transition-all dark:text-white" />
+              <input type="text" name="location" defaultValue={business.location || ""} className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-brand-blue focus:ring-2 focus:ring-brand-gold dark:text-white" />
             </div>
-            
           </div>
-
-          <div className="pt-8 border-t border-gray-200 dark:border-gray-800 flex justify-end">
-            <Link href="/admin/businesses" className="px-6 py-3 font-semibold text-gray-600 dark:text-gray-300 hover:text-gray-900 border border-transparent mr-4">
-              Cancel
-            </Link>
-            <button type="submit" className="bg-brand-gold hover:bg-brand-gold-dark text-white font-bold py-3 px-8 rounded-lg transition-all shadow-md">
-              Save Changes
-            </button>
+          <div className="pt-8 flex justify-end">
+            <button type="submit" className="bg-brand-gold hover:bg-brand-gold-dark text-white font-bold py-3 px-8 rounded-lg">Save Changes</button>
           </div>
         </form>
       </div>
