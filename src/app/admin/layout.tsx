@@ -24,6 +24,10 @@ export default function AdminLayout({
             <Megaphone className="w-5 h-5 text-gray-400 group-hover:text-brand-gold" />
             <span className="font-medium">Announcements</span>
           </Link>
+          <Link href="/admin/gallery" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-brand-blue-light/10 hover:text-brand-blue dark:hover:text-white group transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 group-hover:text-brand-gold"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+            <span className="font-medium">Gallery</span>
+          </Link>
           <Link href="/admin/settings" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-brand-blue-light/10 hover:text-brand-blue dark:hover:text-white group transition-colors">
             <Settings className="w-5 h-5 text-gray-400 group-hover:text-brand-gold" />
             <span className="font-medium">Settings</span>

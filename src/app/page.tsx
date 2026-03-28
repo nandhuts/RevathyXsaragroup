@@ -9,6 +9,7 @@ import ContactForm from "@/components/home/ContactForm";
 export default async function Home() {
   let businesses: Business[] = [];
   let announcements: Announcement[] = [];
+  let galleryItems: { id: string, image: string, category: string }[] = [];
 
   try {
     const { data: bData } = await supabase.from('businesses').select('*').order('id', { ascending: true });
@@ -17,6 +18,9 @@ export default async function Home() {
     // We simulate achievements as static or just generic stats to not break the UI design
     const { data: aData } = await supabase.from('announcements').select('*').order('date', { ascending: false }).limit(3);
     if (aData) announcements = aData;
+
+    const { data: gData } = await supabase.from('gallery').select('*').order('created_at', { ascending: false }).limit(5);
+    if (gData) galleryItems = gData;
   } catch {
     console.warn("Supabase not accessible during build");
   }
@@ -108,6 +112,7 @@ export default async function Home() {
                   alt="About Revathy Xsara Group"
                   fill
                   className="object-cover"
+                  unoptimized={true}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-brand-blue-dark/80 to-transparent" />
                 <div className="absolute bottom-8 left-8 right-8 text-white">
@@ -213,19 +218,19 @@ export default async function Home() {
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="col-span-2 row-span-2 relative h-[400px] md:h-auto rounded-2xl overflow-hidden group">
-                <Image src={businesses[0]?.image || "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=1470&auto=format&fit=crop"} alt="Gallery 1" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                <Image src={galleryItems[0]?.image || "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=1470&auto=format&fit=crop"} alt="Gallery 1" fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized={true} />
               </div>
               <div className="relative h-[200px] rounded-2xl overflow-hidden group">
-                <Image src={businesses[1]?.image || "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=1498&auto=format&fit=crop"} alt="Gallery 2" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                <Image src={galleryItems[1]?.image || "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=1498&auto=format&fit=crop"} alt="Gallery 2" fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized={true} />
               </div>
               <div className="relative h-[200px] rounded-2xl overflow-hidden group">
-                <Image src={businesses[2]?.image || "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1374&auto=format&fit=crop"} alt="Gallery 3" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                <Image src={galleryItems[2]?.image || "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1374&auto=format&fit=crop"} alt="Gallery 3" fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized={true} />
               </div>
               <div className="relative h-[200px] rounded-2xl overflow-hidden group">
-                <Image src={businesses[3]?.image || "https://images.unsplash.com/photo-1580273916550-e323be2ae537?q=80&w=1528&auto=format&fit=crop"} alt="Gallery 4" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                 <Image src={galleryItems[3]?.image || "https://images.unsplash.com/photo-1580273916550-e323be2ae537?q=80&w=1528&auto=format&fit=crop"} alt="Gallery 4" fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized={true} />
               </div>
               <div className="relative h-[200px] rounded-2xl overflow-hidden group">
-                <Image src={businesses[4]?.image || "https://images.unsplash.com/photo-1545083036-79df3b68018e?q=80&w=1470&auto=format&fit=crop"} alt="Gallery 5" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                 <Image src={galleryItems[4]?.image || "https://images.unsplash.com/photo-1545083036-79df3b68018e?q=80&w=1470&auto=format&fit=crop"} alt="Gallery 5" fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized={true} />
               </div>
             </div>
           </div>
@@ -270,7 +275,7 @@ export default async function Home() {
                 {/* Map Embed */}
                 <div className="h-[300px] rounded-2xl overflow-hidden shadow-lg border border-gray-200 dark:border-gray-800">
                   <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3929.1!2d76!3d10!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0!2s!5e0!3m2!1sen!2sin!4v1600000000000!5m2!1sen!2sin"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3942.73320330626!2d76.76970687314115!3d8.811116192365365!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b05e7210c78cee5%3A0xe18334ace142a006!2sRevathy%20CineMax!5e0!3m2!1sen!2sin!4v1774682036009!5m2!1sen!2sin"
                     width="100%"
                     height="100%"
                     style={{ border: 0 }}

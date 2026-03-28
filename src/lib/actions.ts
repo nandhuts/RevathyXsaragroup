@@ -61,3 +61,28 @@ export async function deleteAnnouncement(formData: FormData) {
   revalidatePath("/");
   revalidatePath("/admin/announcements");
 }
+
+export async function createGalleryImage(formData: FormData) {
+  const image = formData.get("image") as string;
+  const category = formData.get("category") as string;
+  const created_at = new Date().toISOString();
+
+  await supabase
+    .from("gallery")
+    .insert([{ image, category, created_at }]);
+
+  revalidatePath("/");
+  revalidatePath("/admin/gallery");
+}
+
+export async function deleteGalleryImage(formData: FormData) {
+  const id = formData.get("id") as string;
+  
+  await supabase
+    .from("gallery")
+    .delete()
+    .eq("id", id);
+    
+  revalidatePath("/");
+  revalidatePath("/admin/gallery");
+}
