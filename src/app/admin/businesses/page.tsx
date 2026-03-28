@@ -18,6 +18,12 @@ export default async function AdminBusinesses() {
     <div>
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-brand-blue dark:text-white">Manage Businesses</h1>
+        <Link 
+          href="/admin/businesses/new" 
+          className="bg-brand-gold hover:bg-brand-gold-dark text-brand-blue-dark font-bold py-2 px-6 rounded-lg transition-all flex items-center shadow-sm"
+        >
+          + Add New Business
+        </Link>
       </div>
 
       <div className="bg-white dark:bg-brand-blue-light rounded-2xl shadow-sm border border-gray-100 dark:border-brand-blue-light overflow-hidden">

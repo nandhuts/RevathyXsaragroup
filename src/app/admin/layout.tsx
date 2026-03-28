@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { LayoutDashboard, Building2, Megaphone, Settings, LogOut } from "lucide-react";
+import { logoutAction } from "@/app/login/actions";
 
 export default function AdminLayout({
   children,
@@ -28,11 +29,17 @@ export default function AdminLayout({
             <span className="font-medium">Settings</span>
           </Link>
         </div>
-        <div className="p-4 border-t border-gray-200 dark:border-brand-blue-light">
-          <Link href="/" className="flex items-center gap-3 px-4 py-3 rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 group transition-colors">
-            <LogOut className="w-5 h-5" />
-            <span className="font-medium">Back to Site</span>
+        <div className="p-4 border-t border-gray-200 dark:border-brand-blue-light flex flex-col gap-2">
+          <Link href="/" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-brand-blue-light/10 group transition-colors">
+            <LogOut className="w-5 h-5 rotate-180" />
+            <span className="font-medium">View Site</span>
           </Link>
+          <form action={logoutAction}>
+            <button type="submit" className="w-full text-left flex items-center gap-3 px-4 py-3 rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 group transition-colors">
+              <LogOut className="w-5 h-5" />
+              <span className="font-medium">Sign Out</span>
+            </button>
+          </form>
         </div>
       </aside>
 
