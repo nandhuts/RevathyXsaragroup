@@ -1,4 +1,6 @@
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
+export const fetchCache = 'force-no-store';
 import { supabase } from "@/lib/supabase";
 import { Building2, Megaphone, CheckCircle2, MessageSquare } from "lucide-react";
 import { MessageRecord } from "@/lib/types";

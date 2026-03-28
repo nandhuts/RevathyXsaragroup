@@ -1,4 +1,6 @@
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
+export const fetchCache = 'force-no-store';
 import { supabase } from "@/lib/supabase";
 import { createGalleryImage, deleteGalleryImage } from "@/lib/actions";
 import { Trash2, Image as ImageIcon } from "lucide-react";
