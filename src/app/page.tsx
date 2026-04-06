@@ -5,7 +5,7 @@ import { supabase } from "@/lib/supabase";
 import { Business, Announcement } from "@/lib/types";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronRight, ArrowRight, ShieldCheck, TrendingUp, Users, Medal, MapPin, Phone, Building2, Globe, HeartHandshake } from "lucide-react";
+import { ChevronRight, ArrowRight, ShieldCheck, Users, Medal, MapPin, Phone, Building2, Globe, HeartHandshake } from "lucide-react";
 import ContactForm from "@/components/home/ContactForm";
 
 export default async function Home() {
@@ -30,11 +30,11 @@ export default async function Home() {
   // Fallback businesses to ensure UI renders with correct entities if DB is empty / offline
   if (businesses.length === 0) {
     businesses = [
-      { id: '1', name: 'Revathy Cinemax', description: 'Premium cinematic experience with RGB real laser projection.', image: 'https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?q=80&w=2056&auto=format&fit=crop', status: 'active', contact_email: '', contact_phone: '', type: 'Entertainment' },
-      { id: '2', name: 'Revathy Xsara Conventional Center', description: 'State-of-the-art venue for weddings, conferences, and mega events.', image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=1498&auto=format&fit=crop', status: 'active', contact_email: '', contact_phone: '', type: 'Events' },
-      { id: '3', name: 'Revathy Xsara Hypermarket', description: 'Your one-stop destination for daily groceries and premium goods.', image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1374&auto=format&fit=crop', status: 'active', contact_email: '', contact_phone: '', type: 'Retail' },
-      { id: '4', name: 'Revathy Tyres and Services', description: 'Professional vehicle maintenance and top-tier tire solutions.', image: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?q=80&w=1528&auto=format&fit=crop', status: 'active', contact_email: '', contact_phone: '', type: 'Auto' },
-      { id: '5', name: 'Revathy Fuels', description: 'High-quality fuels and quick servicing for all commuters on the go.', image: 'https://images.unsplash.com/photo-1545083036-79df3b68018e?q=80&w=1470&auto=format&fit=crop', status: 'active', contact_email: '', contact_phone: '', type: 'Auto' },
+      { id: '1', name: 'Revathy Cinemax', description: 'Premium cinematic experience with RGB real laser projection.', image: 'https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?q=80&w=2056&auto=format&fit=crop', category: 'Entertainment', location: 'Parippally' },
+      { id: '2', name: 'Revathy Xsara Conventional Center', description: 'State-of-the-art venue for weddings, conferences, and mega events.', image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=1498&auto=format&fit=crop', category: 'Events', location: 'Parippally' },
+      { id: '3', name: 'Revathy Xsara Hypermarket', description: 'Your one-stop destination for daily groceries and premium goods.', image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1374&auto=format&fit=crop', category: 'Retail', location: 'Parippally' },
+      { id: '4', name: 'Revathy Tyres and Services', description: 'Professional vehicle maintenance and top-tier tire solutions.', image: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?q=80&w=1528&auto=format&fit=crop', category: 'Auto', location: 'Parippally' },
+      { id: '5', name: 'Revathy Fuels', description: 'High-quality fuels and quick servicing for all commuters on the go.', image: 'https://images.unsplash.com/photo-1545083036-79df3b68018e?q=80&w=1470&auto=format&fit=crop', category: 'Auto', location: 'Parippally' },
     ];
   }
 
@@ -219,7 +219,7 @@ export default async function Home() {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-brand-blue-dark/90 via-brand-blue-dark/20 to-transparent transition-opacity duration-300" />
                       <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/30 text-white text-xs font-bold tracking-widest uppercase shadow-sm">
-                         {business.type || 'Services'}
+                         {business.category || 'Services'}
                       </div>
                       <h4 className="absolute bottom-5 left-6 right-6 text-2xl font-bold text-white z-10 leading-tight">
                         {business.name}
