@@ -117,9 +117,9 @@ export default async function Home() {
         <section id="about" className="py-24 bg-gray-50 dark:bg-brand-blue-dark border-b border-gray-200 dark:border-gray-800">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-              <div className="relative h-[550px] rounded-3xl overflow-hidden shadow-2xl">
+              <div className="relative h-[550px] w-full rounded-3xl overflow-hidden shadow-2xl">
                 <Image
-                  src="https://images.unsplash.com/photo-1556761175-5973dc0f32b7?q=80&w=1632&auto=format&fit=crop"
+                  src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1470&auto=format&fit=crop"
                   alt="About Revathy Xsara Group"
                   fill
                   className="object-cover"
