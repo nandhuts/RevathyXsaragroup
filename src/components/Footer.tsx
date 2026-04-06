@@ -71,7 +71,12 @@ export default function Footer() {
             <ul className="space-y-4">
               <li className="flex items-start text-gray-400 text-sm">
                 <MapPin className="w-5 h-5 mr-3 text-brand-gold flex-shrink-0" />
-                <span>Revathy Xsara Group,Parippally, Kerala, India</span>
+                <div>
+                  <span className="block mb-1">Revathy Xsara Group, Parippally, Kerala, India</span>
+                  <a href="https://maps.google.com/?q=Revathy+CineMax+Parippally" target="_blank" rel="noopener noreferrer" className="text-brand-gold hover:underline text-xs font-semibold flex items-center">
+                    Get Directions
+                  </a>
+                </div>
               </li>
               <li className="flex items-center text-gray-400 text-sm">
                 <Phone className="w-5 h-5 mr-3 text-brand-gold flex-shrink-0" />
@@ -87,7 +92,7 @@ export default function Footer() {
 
         <div className="pt-8 border-t border-brand-blue-light flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-500 text-xs text-center md:text-left">
-            &copy; {currentYear} Revathy Xsara Private Limited. All rights reserved | Developed by <Link href="https://www.instagram.com/aaasta.h" target="_blank" rel="noopener noreferrer" className="hover:text-brand-gold transition-colors">Anandhu digital solutions</Link>
+            &copy; {currentYear} Revathy Xsara Private Limited. All rights reserved | Developed by <Link href="https://www.instagram.com/aaasta.h" target="_blank" rel="noopener noreferrer" className="hover:text-brand-gold transition-colors font-bold">Anandhu Digital</Link>
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0 text-xs text-gray-500">
             <Link href="#" className="hover:text-brand-gold transition-colors">Privacy Policy</Link>
